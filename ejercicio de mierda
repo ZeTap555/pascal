@@ -1,0 +1,167 @@
+program ejercio;
+type
+    pasarlista = array [1..12] of integer;
+    alumno= record
+        dni: integer;
+        apeynom: string;
+        nota: 4..10;
+        turno: 1..4;
+        asistencias: pasarlista;
+    end;
+    lista= ^nodo;
+    nodo= record
+        dato:alumno;
+        sig: lista;
+    end;
+    vectorcontador= array [1..4] of integer;
+    
+    
+    
+procedure cargarlista (var l: lista); // se dispone
+
+procedure inicializarvector (v: vectorcontador);
+var 
+    i: integer;
+begin
+    for i := 1 to 4 then v[i]:= 0;
+end;
+
+
+function cumplecondicion(v: pasarlista): boolean;
+var 
+    ok: boolean;
+    suma:0:
+begin
+    suma:= 0;
+    ok:= false;
+    for i:= 1 to 12 do 
+        suma:= suma + v[i];
+    end;
+    if (suma>=8)then 
+        ok:= true;
+    end;
+    cumplecondicion:= (ok);
+end;
+
+procedure insertarnodoOrdenado (var nuevalista: lista; elemento: alumno);
+var 
+    ant; act; nue: lista;
+begin
+    new(nue);
+    nue^.dato:= elemento;
+    nue^.sig:= nil;
+    act:= nuevalista;
+    ant:= nuevalista;
+    while ((act<>nil)and(elemento.turno>nuevalista^.dato.turno)) do begin //ordeno por turno
+        ant:= act;
+        act:= act^.sig;
+    end;
+    if (act=ant) then begin
+        nuevalista:= nue;
+    end
+    else 
+        ant^.sig:= nue;
+    end;
+    nue^.sig:= act;
+end;
+
+procedure procesarlistaydevolver (l: lista; var nuevalista: lista);
+begin
+    while(l<>nil)do begin
+        if (cumplecondicion (l^.dato.asistencias) = true) then begin
+            insertarnodoOrdenado(nuevalista, l);
+        end;
+        l:=l^.sig;
+    end;
+end;
+
+function turnomaximo (alu: integer, var max: integer, var tmax: integer; turn: integer): integer;
+var
+begin
+    if (alu>max)then begin
+        max:= alu;
+        tmax:=turn;
+    end;
+    turnomaximo:= tmax;
+end;
+function cumplenota (nota: integer): boolean;
+var 
+    ok: boolean;
+begin
+    ok:= false;
+    if (nota>=8) then begin
+        ok:=true;
+    end;
+end;
+
+function notiene0 (dni: integer): boolean;
+var 
+    ok:boolean;
+    digito: integer;
+begin
+    ok:= true
+    while (dni<>0) do begin
+        digito:= dni mod 10;
+        if (digito=0) then begin
+            ok:= false;
+        end;
+        dni:=dni div 10;
+    end;
+    notiene0:= (ok);
+end;
+ 
+function maximo (v: vectorcontador): integer;
+var 
+    i, max: integer;
+    maxi: integer;
+begin
+    maxi:= 0;
+    max:= -1;
+    for i:= 1 to 4 do begin
+        if (v[i]>max) then begin
+            max:=v[i];
+            maxi:= i;
+        end;
+    end;
+    maximo:= (maxi);
+end;
+
+procedure imprimirlista (nuevalista: lista;var v: vectorcontador);
+var
+    turnoact: 1..4;
+    alum: integer;
+    tmax: integer;
+    cantalumsin0: integer;
+begin
+    inicializarvector(v);
+    cantalumsin0: 0;
+    max:= -1;
+    tmax:= 0;
+    while (nuevalista<>nil) do begin
+        turnoact:= nuevalista^.dato.turno;
+        alum:= 0;
+        while ((nuevalista<>nil)and(turnoact = nuevalista^.dato.turno)) do begin
+            alum:= alum + 1;
+            if (cumplenota= true)then 
+                writeln(nuevalista^.dato.apeynom);
+                writeln(nuevalista^.dato.dni);
+            end;
+            if (notiene0=true) then 
+                cantalumsin0:= cantalumsin0 + 1;
+            end;
+            v[turnoact]:= v[turnoact]+1;
+            nuevalista:= nuevalista^.sig;
+        end;
+    end;
+    writeln('la cantidad de alumnos sin 0 en su dni son = ', cantalumsin0);
+    writeln ('el turno con mayor cantidad de alumnos con la posibilidad de rendir el parcial son = ',maximo (v));
+end;
+var 
+    l: lista;
+    listanueva: lista;
+    vec: vectorcontador;
+begin
+    cargarlista(l); //se dispone
+    procesarlistaydevolver (l, listanueva);
+    imprimirlista(listanueva, vec);
+end.
